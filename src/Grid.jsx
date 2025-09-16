@@ -6,6 +6,8 @@ function Grid() {
     const [minedCells, setMinedCells] = useState(Array(100).fill(false));
     const [neighborCounts, setNeighborCounts] = useState(Array(100).fill(0));
     const [flaggedCells, setFlaggedCells] = useState(Array(100).fill(false));
+    const [gameOver, setGameOver] = useState(false);
+    const [gameWon, setGameWon] = useState(false);
 
     useEffect(() => {
         const newMines = randomMines();
@@ -100,6 +102,9 @@ function Grid() {
     }
 
     const handleClick = (index) => {
+        if (gameOver || gameWon) {
+            return;
+        }
         if (flaggedCells[index]) {
             return;
         }
@@ -109,13 +114,27 @@ function Grid() {
         if (minedCells[index]) {
             console.log("Mine clicked")
             newRevealed[index] = true;
-        } else if (neighborCounts[index] === 0) {
+            setRevealedCells(newRevealed);
+            setGameOver(true);
+            console.log("Game Over");
+            return;
+        } 
+        
+        if (neighborCounts[index] === 0) {
             revealEmptyCells(index, newRevealed, neighborCounts);
         } else {
             newRevealed[index] = true;
         }
 
         setRevealedCells(newRevealed);
+
+        const totalSafeCells = cells.length - minedCells.filter(Boolean).length;
+        const revealedSafeCells = newRevealed.filter((isRevealed, i) => isRevealed && !minedCells[i]).length;
+
+        if (revealedSafeCells === totalSafeCells) {
+            setGameWon(true);
+            console.log("You Win!");
+        }
     }
 
     return (
