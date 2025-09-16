@@ -5,6 +5,7 @@ function Grid() {
     const [revealedCells, setRevealedCells] = useState(Array(100).fill(false));
     const [minedCells, setMinedCells] = useState(Array(100).fill(false));
     const [neighborCounts, setNeighborCounts] = useState(Array(100).fill(0));
+    const [flaggedCells, setFlaggedCells] = useState(Array(100).fill(false));
 
     useEffect(() => {
         const newMines = randomMines();
@@ -88,7 +89,21 @@ function Grid() {
         }
     }
 
+    const handleRightClick = (e, index) => {
+        e.preventDefault();
+
+        if (revealedCells[index]) return;
+
+        const newFlags = [...flaggedCells];
+        newFlags[index] = !newFlags[index];
+        setFlaggedCells(newFlags);
+    }
+
     const handleClick = (index) => {
+        if (flaggedCells[index]) {
+            return;
+        }
+
         const newRevealed = [...revealedCells];
 
         if (minedCells[index]) {
@@ -110,10 +125,11 @@ function Grid() {
                     <div
                         key={cell}
                         onClick={() => handleClick(index)}
+                        onContextMenu={(e) => handleRightClick(e, index)}
                         className={`w-8 h-8 border border-green-800 
                             ${!revealedCells[index] ? 'bg-green-500' : minedCells[index] ? 'bg-red-500' : 'bg-gray-300'}`}
                     >
-                        {revealedCells[index] ? minedCells[index] ? "💣" : neighborCounts[index] : ""}
+                        {flaggedCells[index] && !revealedCells[index] ? "🚩" : revealedCells[index] ? minedCells[index] ? "💣" : neighborCounts[index] : ""}
                     </div>
                 ))}
             </div>
