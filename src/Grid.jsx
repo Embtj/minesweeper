@@ -118,8 +118,8 @@ function Grid() {
             setGameOver(true);
             console.log("Game Over");
             return;
-        } 
-        
+        }
+
         if (neighborCounts[index] === 0) {
             revealEmptyCells(index, newRevealed, neighborCounts);
         } else {
@@ -137,8 +137,21 @@ function Grid() {
         }
     }
 
+    const resetGame = () => {
+        const newMines = randomMines();
+        setMinedCells(newMines);
+
+        const counts = calculateNeighborCounts(newMines);
+        setNeighborCounts(counts);
+
+        setRevealedCells(Array(100).fill(false));
+        setFlaggedCells(Array(100).fill(false));
+        setGameOver(false);
+        setGameWon(false);
+    }
+
     return (
-        <div className="border-4 border-green-800 p-4 rounded-md">
+        <div className="relative border-4 border-green-800 p-4 rounded-md">
             <div className="grid grid-cols-10 gap-1">
                 {cells.map((cell, index) => (
                     <div
@@ -152,6 +165,22 @@ function Grid() {
                     </div>
                 ))}
             </div>
+            {(gameOver || gameWon) && (
+                <div className='absolute inset-0 flex items-center justify-center'>
+                    <div className="p-8 rounded-lg bg-green-800 max-w-sm text-center ">
+                        <h2 className='text-white text-xl sm:text-2xl font-bold mb-4'>
+                            {gameOver ? "Game Over" : "You Win!"}
+                        </h2>
+                        <button
+                            className="mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700"
+                            onClick={resetGame}
+                        >
+                            Restart
+                        </button>
+                    </div>
+
+                </div>
+            )}
         </div>
 
     )
