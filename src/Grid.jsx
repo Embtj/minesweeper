@@ -112,8 +112,15 @@ function Grid() {
         const newRevealed = [...revealedCells];
 
         if (minedCells[index]) {
-            console.log("Mine clicked")
-            newRevealed[index] = true;
+            console.log("Mine clicked");
+
+            const newRevealed = [...revealedCells];
+            minedCells.forEach((hasMine, i) => {
+                if (hasMine) {
+                    newRevealed[i] = true;
+                }
+            });
+
             setRevealedCells(newRevealed);
             setGameOver(true);
             console.log("Game Over");
@@ -133,6 +140,15 @@ function Grid() {
 
         if (revealedSafeCells === totalSafeCells) {
             setGameWon(true);
+
+            const newFlags = [...flaggedCells];
+            minedCells.forEach((hasMine, i) => {
+                if (hasMine) {
+                    newFlags[i] = true;
+                }
+            });
+            setFlaggedCells(newFlags);
+
             console.log("You Win!");
         }
     }
@@ -152,7 +168,7 @@ function Grid() {
 
     return (
         <div className="relative border-4 border-green-800 p-4 rounded-md">
-            <div className="grid grid-cols-10 gap-1">
+            <div className="grid grid-cols-10">
                 {cells.map((cell, index) => (
                     <div
                         key={cell}
